@@ -4,10 +4,10 @@ using Microsoft.Data.SqlClient;
 
 namespace APBD8.Services;
 
-public class TripsService : ITripsService
+public class TripsService(IConfiguration config) : ITripsService
 {
-    private readonly string _connectionString = @"Server=(localdb)\MSSQLLocalDB;Database=APBD8";
-    
+    private readonly string _connectionString = config.GetConnectionString("Default") ?? throw new InvalidOperationException();
+
     public async Task<List<TripDTO>> GetTrips()
     {
         var trips = new List<TripDTO>();
