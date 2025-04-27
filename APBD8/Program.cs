@@ -1,3 +1,4 @@
+using APBD8.Repositories;
 using APBD8.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +9,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddControllers();
+
+builder.Services.AddScoped<ITripsRepository, TripsRepository>();
 builder.Services.AddScoped<ITripsService, TripsService>();
 
 var app = builder.Build();

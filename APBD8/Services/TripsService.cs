@@ -1,32 +1,30 @@
 ﻿using System.Data;
 using APBD8.Models.DTOs;
+using APBD8.Repositories;
 using Microsoft.Data.SqlClient;
 
 namespace APBD8.Services;
 
-public class TripsService(IConfiguration config) : ITripsService
+public class TripsService(ITripsRepository repository) : ITripsService
 {
-    private readonly string _connectionString = config.GetConnectionString("Default") ?? throw new InvalidOperationException();
-
     public async Task<List<TripDTO>> GetTrips()
     {
-        var trips = new List<TripDTO>();
-        
-        var cmdText = "select IdTrip, Name from Trip";
-
-        await using var conn = new SqlConnection(_connectionString);
-        await using var command = new SqlCommand(cmdText, conn);
-        await conn.OpenAsync();
-        var reader = await command.ExecuteReaderAsync();
-        while (await reader.ReadAsync())
+        var trips = await repository.GetTrips();
+        var res = await Task.WhenAll(trips.Select(async t =>
         {
-            trips.Add(new TripDTO()
+            var countries = await repository.GetCountries(t.IdTrip);
+            return new TripDTO()
             {
-                IdTrip = reader.GetInt32(0),
-                Name = reader.GetString(1),
-            });
-        }
-
-        return trips;
+                IdTrip = t.IdTrip,
+                Name = t.Name,
+                DateFrom = t.DateFrom,
+                DateTo = t.DateTo,
+                Description = t.Description,
+                MaxPeople = t.MaxPeople,
+                Countries = countries,
+            };
+        }));
+        
+        return res.ToList();
     }
 }
