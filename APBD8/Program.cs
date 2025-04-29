@@ -12,6 +12,8 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<ITripsRepository, TripsRepository>();
 builder.Services.AddScoped<ITripsService, TripsService>();
+builder.Services.AddScoped<IClientsRepository, ClientsRepository>();
+builder.Services.AddScoped<IClientsService, ClientService>();
 
 var app = builder.Build();
 
