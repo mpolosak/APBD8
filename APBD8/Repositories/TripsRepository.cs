@@ -52,4 +52,34 @@ public class TripsRepository(IConfiguration config) : ITripsRepository
 
         return countries;
     }
+
+    public async Task<List<ClientsTrip>> GetClientsTrips(int clientId)
+    {
+        var clientsTrips = new List<ClientsTrip>();
+        const string cmdText = @"SELECT trip.IdTrip, Name, Description, DateFrom, DateTo, MaxPeople, RegisteredAt, PaymentDate 
+            FROM trip JOIN client_trip ON trip.IdTrip = client_trip.IdTrip WHERE IdClient = @IdClient;";
+        
+        await using var conn = new SqlConnection(_connectionString);
+        await using var command = new SqlCommand(cmdText, conn);
+        
+        command.Parameters.AddWithValue("@IdClient", clientId);
+        await conn.OpenAsync();
+        var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            clientsTrips.Add(new ClientsTrip()
+            {
+                IdTrip = reader.GetInt32(0),
+                Name = reader.GetString(1),
+                Description = reader.GetString(2),
+                DateFrom = reader.GetDateTime(3),
+                DateTo = reader.GetDateTime(4),
+                MaxPeople = reader.GetInt32(5),
+                RegisteredAt = reader.GetInt32(6),
+                PaymentDate = reader.IsDBNull(7) ? null : reader.GetInt32(7),
+            });
+        }
+        
+        return clientsTrips;
+    }
 }
