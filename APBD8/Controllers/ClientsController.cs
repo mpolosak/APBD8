@@ -21,6 +21,13 @@ public class ClientsController(ITripsService tripsService, IClientsService clien
         await tripsService.AddClientToTrip(clientId, postId);
         return Created();
     }
+
+    [HttpDelete("{clientId:int}/trips/{postId:int}")]
+    public async Task<IActionResult> PostClientsTrips(int clientId, int postId)
+    {
+        await tripsService.RemoveClientFromTrip(clientId, postId);
+        return NoContent();
+    }
     
     [HttpPost]
     public async Task<IActionResult> PostClient([FromBody] ClientDTO client)
@@ -30,4 +37,5 @@ public class ClientsController(ITripsService tripsService, IClientsService clien
         var id = await clientsService.AddClient(client);
         return Created($"api/clients/{id}", id);
     }
+    
 }

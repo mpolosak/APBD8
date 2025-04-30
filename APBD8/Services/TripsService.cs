@@ -55,4 +55,9 @@ public class TripsService(ITripsRepository repository) : ITripsService
         var registredAt = int.Parse(DateTime.Now.ToString("yyyyMMdd"));
         await repository.AddClientToTrip(clientId, postId, registredAt);
     }
+
+    public async Task RemoveClientFromTrip(int clientId, int postId)
+    {
+        await repository.RemoveClientFromTrip(clientId, postId);
+    }
 }

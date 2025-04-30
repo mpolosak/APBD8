@@ -9,4 +9,5 @@ public interface ITripsService
     Task<List<ClientsTripDTO>> GetClientsTrips(int clientId);
 
     public Task AddClientToTrip(int clientId, int postId);
+    public Task RemoveClientFromTrip(int clientId, int postId);
 }

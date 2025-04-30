@@ -9,4 +9,6 @@ public interface ITripsRepository
     Task<List<ClientsTrip>> GetClientsTrips(int clientId);
 
     public Task AddClientToTrip(int clientId, int tripId, int registeredAt);
+    
+    public Task RemoveClientFromTrip(int clientId, int tripId);
 }

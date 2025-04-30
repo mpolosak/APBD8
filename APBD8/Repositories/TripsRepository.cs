@@ -94,4 +94,15 @@ public class TripsRepository(IConfiguration config) : ITripsRepository
         await conn.OpenAsync();
         await command.ExecuteNonQueryAsync();
     }
+
+    public async Task RemoveClientFromTrip(int clientId, int tripId)
+    {
+        const string cmdText = "DELETE FROM Client_Trip WHERE IdClient = @IdClient  AND IdTrip = @IdTrip;";
+        await using var conn = new SqlConnection(_connectionString);
+        await using var command = new SqlCommand(cmdText, conn);
+        command.Parameters.AddWithValue("@IdClient", clientId);
+        command.Parameters.AddWithValue("@IdTrip", tripId);
+        await conn.OpenAsync();
+        await command.ExecuteNonQueryAsync();
+    }
 }
