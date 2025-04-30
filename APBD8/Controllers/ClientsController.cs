@@ -15,6 +15,13 @@ public class ClientsController(ITripsService tripsService, IClientsService clien
         return Ok(trips);
     }
 
+    [HttpPut("{clientId:int}/trips/{postId:int}")]
+    public async Task<IActionResult> PutClientsTrips(int clientId, int postId)
+    {
+        await tripsService.AddClientToTrip(clientId, postId);
+        return Created();
+    }
+    
     [HttpPost]
     public async Task<IActionResult> PostClient([FromBody] ClientDTO client)
     {

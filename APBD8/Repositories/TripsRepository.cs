@@ -82,4 +82,16 @@ public class TripsRepository(IConfiguration config) : ITripsRepository
         
         return clientsTrips;
     }
+
+    public async Task AddClientToTrip(int clientId, int tripId, int registeredAt)
+    {
+        const string  cmdText = "INSERT INTO Client_Trip(IdClient, IdTrip, RegisteredAt) VALUES (@ClientId, @PostId, @RegisteredAt);";
+        await using var conn = new SqlConnection(_connectionString);
+        await using var command = new SqlCommand(cmdText, conn);
+        command.Parameters.AddWithValue("@ClientId", clientId);
+        command.Parameters.AddWithValue("@PostId", tripId);
+        command.Parameters.AddWithValue("@RegisteredAt", registeredAt);
+        await conn.OpenAsync();
+        await command.ExecuteNonQueryAsync();
+    }
 }

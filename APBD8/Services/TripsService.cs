@@ -49,4 +49,10 @@ public class TripsService(ITripsRepository repository) : ITripsService
         }));
         return res.ToList();
     }
+
+    public async Task AddClientToTrip(int clientId, int postId)
+    {
+        var registredAt = int.Parse(DateTime.Now.ToString("yyyyMMdd"));
+        await repository.AddClientToTrip(clientId, postId, registredAt);
+    }
 }
