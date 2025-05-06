@@ -46,4 +46,15 @@ public class ClientsRepository(IConfiguration config) : IClientsRepository
             PESEL = reader.GetString(4)
         };
     }
+
+    public async Task<bool> ClientExists(int id)
+    {
+        const string cmdText = "SELECT 1 from Client where IdClient = @IdClient";
+        await using var conn = new SqlConnection(_connectionString);
+        await using var command = new SqlCommand(cmdText, conn);
+        command.Parameters.AddWithValue("@IdClient", id);
+        await conn.OpenAsync();
+        await using var reader = await command.ExecuteReaderAsync();
+        return await reader.ReadAsync();
+    }
 }

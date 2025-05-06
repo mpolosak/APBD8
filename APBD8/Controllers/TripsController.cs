@@ -6,12 +6,12 @@ namespace APBD8.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class TripsController(ITripsService tripsService) : ControllerBase
+public class TripsController(IClientsTripsService clientsTripsService) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetTrips()
     {
-        var trips = await tripsService.GetTrips();
+        var trips = await clientsTripsService.GetTrips();
         return Ok(trips);
     }
 }

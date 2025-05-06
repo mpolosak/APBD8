@@ -11,9 +11,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<ITripsRepository, TripsRepository>();
-builder.Services.AddScoped<ITripsService, TripsService>();
 builder.Services.AddScoped<IClientsRepository, ClientsRepository>();
-builder.Services.AddScoped<IClientsService, ClientService>();
+builder.Services.AddScoped<IClientsTripsService, ClientsTripsService>();
 
 var app = builder.Build();
 

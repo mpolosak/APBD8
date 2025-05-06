@@ -7,26 +7,35 @@ namespace APBD8.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class ClientsController(ITripsService tripsService, IClientsService clientsService) : ControllerBase
+public class ClientsController(IClientsTripsService service) : ControllerBase
 {
     [HttpGet("{id:int}/trips")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
     public async Task<IActionResult> GetClientsTrips(int id)
     {
-        var trips = await tripsService.GetClientsTrips(id);
-        return Ok(trips);
+        try
+        {
+            var trips = await service.GetClientsTrips(id);
+            return Ok(trips);
+        }
+        catch(NotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
     }
 
     [HttpPut("{clientId:int}/trips/{postId:int}")]
     public async Task<IActionResult> PutClientsTrips(int clientId, int postId)
     {
-        await tripsService.AddClientToTrip(clientId, postId);
+        await service.AddClientToTrip(clientId, postId);
         return Created();
     }
 
     [HttpDelete("{clientId:int}/trips/{postId:int}")]
     public async Task<IActionResult> PostClientsTrips(int clientId, int postId)
     {
-        await tripsService.RemoveClientFromTrip(clientId, postId);
+        await service.RemoveClientFromTrip(clientId, postId);
         return NoContent();
     }
 
@@ -35,7 +44,7 @@ public class ClientsController(ITripsService tripsService, IClientsService clien
     {
         try
         {
-            var client = await clientsService.GetClient(id);
+            var client = await service.GetClient(id);
             return Ok(client);
         }
         catch (NotFoundException exception)
@@ -49,7 +58,7 @@ public class ClientsController(ITripsService tripsService, IClientsService clien
     {
         if(!ModelState.IsValid)
             return BadRequest(ModelState);
-        var id = await clientsService.AddClient(client);
+        var id = await service.AddClient(client);
         return Created($"api/clients/{id}", id);
     }
     

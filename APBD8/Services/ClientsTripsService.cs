@@ -1,11 +1,13 @@
 ﻿using System.Data;
+using APBD8.Exceptions;
 using APBD8.Models.DTOs;
 using APBD8.Repositories;
 using Microsoft.Data.SqlClient;
+using Microsoft.IdentityModel.Tokens;
 
 namespace APBD8.Services;
 
-public class TripsService(ITripsRepository repository) : ITripsService
+public class ClientsTripsService(ITripsRepository repository, IClientsRepository clientsRepository) : IClientsTripsService
 {
     public async Task<List<TripDTO>> GetTrips()
     {
@@ -30,6 +32,10 @@ public class TripsService(ITripsRepository repository) : ITripsService
 
     public async Task<List<ClientsTripDTO>> GetClientsTrips(int clientId)
     {
+        if (!await clientsRepository.ClientExists(clientId))
+        {
+            throw new NotFoundException("Client not found");
+        }
         var trips = await repository.GetClientsTrips(clientId);
         var res = await Task.WhenAll(trips.Select(async t =>
         {
@@ -47,6 +53,8 @@ public class TripsService(ITripsRepository repository) : ITripsService
                 PaymentDate = t.PaymentDate,
             };
         }));
+        if (res.IsNullOrEmpty())
+            throw new NotFoundException("No trips found for specified client");
         return res.ToList();
     }
 
@@ -59,5 +67,18 @@ public class TripsService(ITripsRepository repository) : ITripsService
     public async Task RemoveClientFromTrip(int clientId, int postId)
     {
         await repository.RemoveClientFromTrip(clientId, postId);
+    }
+    
+    public async Task<int> AddClient(ClientDTO client)
+    {
+        return await clientsRepository.AddClient(client);
+    }
+
+    public async Task<ClientDTO> GetClient(int id)
+    {
+        var client = await clientsRepository.GetClient(id);
+        if (client == null)
+            throw new NotFoundException($"Client not found");
+        return client;
     }
 }

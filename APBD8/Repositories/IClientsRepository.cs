@@ -6,4 +6,5 @@ public interface IClientsRepository
 {
     public Task<int> AddClient(ClientDTO client);
     public Task<ClientDTO?> GetClient(int id);
+    public Task<bool> ClientExists(int id);
 }
