@@ -1,3 +1,4 @@
+using APBD8.Exceptions;
 using APBD8.Models.DTOs;
 using APBD8.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -27,6 +28,20 @@ public class ClientsController(ITripsService tripsService, IClientsService clien
     {
         await tripsService.RemoveClientFromTrip(clientId, postId);
         return NoContent();
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetClient(int id)
+    {
+        try
+        {
+            var client = await clientsService.GetClient(id);
+            return Ok(client);
+        }
+        catch (NotFoundException exception)
+        {
+            return NotFound(exception.Message);
+        }
     }
     
     [HttpPost]
