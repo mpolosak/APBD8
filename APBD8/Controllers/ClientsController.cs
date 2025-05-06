@@ -14,15 +14,8 @@ public class ClientsController(IClientsTripsService service) : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
     public async Task<IActionResult> GetClientsTrips(int id)
     {
-        try
-        {
-            var trips = await service.GetClientsTrips(id);
-            return Ok(trips);
-        }
-        catch(NotFoundException e)
-        {
-            return NotFound(e.Message);
-        }
+        var trips = await service.GetClientsTrips(id);
+        return Ok(trips);
     }
 
     [HttpPut("{clientId:int}/trips/{postId:int}")]
@@ -42,15 +35,8 @@ public class ClientsController(IClientsTripsService service) : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetClient(int id)
     {
-        try
-        {
-            var client = await service.GetClient(id);
-            return Ok(client);
-        }
-        catch (NotFoundException exception)
-        {
-            return NotFound(exception.Message);
-        }
+        var client = await service.GetClient(id);
+        return Ok(client);
     }
     
     [HttpPost]
