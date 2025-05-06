@@ -13,13 +13,24 @@ public class GlobalExceptionHandlerMiddleware(RequestDelegate next,  ILogger<Glo
         catch (NotFoundException ex)
         {
             logger.LogError(ex, "Not found exception");
-            await HandleExceptionAsync(context, ex);
+            await HandleNotFoundExceptionAsync(context, ex);
+        }
+        catch (ConflictException ex)
+        {
+            logger.LogError(ex, "Conflict exception");
+            await HandleConflictExceptionAsync(context, ex);
         }
     }
 
-    static async Task HandleExceptionAsync(HttpContext context,  Exception ex)
+    private static async Task HandleNotFoundExceptionAsync(HttpContext context,  Exception ex)
     {
         context.Response.StatusCode = StatusCodes.Status404NotFound;
+        context.Response.ContentType = "application/text";
+        await context.Response.WriteAsync(ex.Message);
+    }
+    private static async Task HandleConflictExceptionAsync(HttpContext context,  Exception ex)
+    {
+        context.Response.StatusCode = StatusCodes.Status409Conflict;
         context.Response.ContentType = "application/text";
         await context.Response.WriteAsync(ex.Message);
     }

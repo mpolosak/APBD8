@@ -4,6 +4,7 @@ namespace APBD8.Repositories;
 
 public interface ITripsRepository
 {
+    Task<bool> TripExists(int tripId);
     Task<List<Trip>> GetTrips();
     Task<List<string>> GetCountries(int idTrip);
     Task<List<ClientsTrip>> GetClientsTrips(int clientId);

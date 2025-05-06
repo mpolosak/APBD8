@@ -1,3 +1,4 @@
+using APBD8.Exceptions;
 using APBD8.Models;
 using APBD8.Models.DTOs;
 using APBD8.Services;
@@ -9,6 +10,16 @@ public class TripsRepository(IConfiguration config) : ITripsRepository
 {
     private readonly string _connectionString = config.GetConnectionString("Default") ?? throw new InvalidOperationException();
 
+    public async Task<bool> TripExists(int tripId)
+    {
+        const string sql = "SELECT 1 FROM Trip WHERE IdTrip = @tripId";
+        
+        await using var connection = new SqlConnection(_connectionString);
+        await using var command = new SqlCommand(sql, connection);
+        command.Parameters.AddWithValue("@tripId", tripId);
+        await connection.OpenAsync();
+        return await command.ExecuteScalarAsync() is not null;
+    }
     public async Task<List<Trip>> GetTrips()
     {
         var trips = new List<Trip>();
@@ -92,7 +103,14 @@ public class TripsRepository(IConfiguration config) : ITripsRepository
         command.Parameters.AddWithValue("@PostId", tripId);
         command.Parameters.AddWithValue("@RegisteredAt", registeredAt);
         await conn.OpenAsync();
-        await command.ExecuteNonQueryAsync();
+        try
+        {
+            await command.ExecuteNonQueryAsync();
+        }
+        catch (SqlException sqlEx)
+        {
+            throw new ConflictException("Client already added to trip", sqlEx);
+        }
     }
 
     public async Task RemoveClientFromTrip(int clientId, int tripId)

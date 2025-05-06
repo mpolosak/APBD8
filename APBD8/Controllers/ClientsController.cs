@@ -18,21 +18,26 @@ public class ClientsController(IClientsTripsService service) : ControllerBase
         return Ok(trips);
     }
 
-    [HttpPut("{clientId:int}/trips/{postId:int}")]
-    public async Task<IActionResult> PutClientsTrips(int clientId, int postId)
+    [HttpPut("{clientId:int}/trips/{tripId:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
+    [ProducesResponseType(StatusCodes.Status409Conflict, Type = typeof(string))]
+    public async Task<IActionResult> PutClientsTrips(int clientId, int tripId)
     {
-        await service.AddClientToTrip(clientId, postId);
+        await service.AddClientToTrip(clientId, tripId);
         return Created();
     }
 
-    [HttpDelete("{clientId:int}/trips/{postId:int}")]
-    public async Task<IActionResult> PostClientsTrips(int clientId, int postId)
+    [HttpDelete("{clientId:int}/trips/{tripId:int}")]
+    public async Task<IActionResult> PostClientsTrips(int clientId, int tripId)
     {
-        await service.RemoveClientFromTrip(clientId, postId);
+        await service.RemoveClientFromTrip(clientId, tripId);
         return NoContent();
     }
 
     [HttpGet("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
     public async Task<IActionResult> GetClient(int id)
     {
         var client = await service.GetClient(id);

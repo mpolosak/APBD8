@@ -58,10 +58,14 @@ public class ClientsTripsService(ITripsRepository repository, IClientsRepository
         return res.ToList();
     }
 
-    public async Task AddClientToTrip(int clientId, int postId)
+    public async Task AddClientToTrip(int clientId, int tripId)
     {
-        var registredAt = int.Parse(DateTime.Now.ToString("yyyyMMdd"));
-        await repository.AddClientToTrip(clientId, postId, registredAt);
+        if (!await clientsRepository.ClientExists(clientId))
+            throw new NotFoundException("Client not found");
+        if (!await repository.TripExists(tripId))
+            throw new NotFoundException("Trip not found");
+        var registeredAt = int.Parse(DateTime.Now.ToString("yyyyMMdd"));
+        await repository.AddClientToTrip(clientId, tripId, registeredAt);
     }
 
     public async Task RemoveClientFromTrip(int clientId, int postId)
