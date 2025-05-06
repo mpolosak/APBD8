@@ -19,16 +19,17 @@ public class ClientsController(IClientsTripsService service) : ControllerBase
     }
 
     [HttpPut("{clientId:int}/trips/{tripId:int}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status409Conflict, Type = typeof(string))]
     public async Task<IActionResult> PutClientsTrips(int clientId, int tripId)
     {
         await service.AddClientToTrip(clientId, tripId);
-        return Created();
+        return Created($"{clientId}/trips/", "Client added to trip");
     }
 
     [HttpDelete("{clientId:int}/trips/{tripId:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> PostClientsTrips(int clientId, int tripId)
     {
         await service.RemoveClientFromTrip(clientId, tripId);
